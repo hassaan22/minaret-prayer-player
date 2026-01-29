@@ -142,11 +142,29 @@ class NextPrayerSensor(AzanBaseSensor):
         super().__init__(coordinator, entry)
         self._attr_unique_id = f"{entry.entry_id}_next_prayer"
         self._attr_icon = "mdi:mosque"
+        self._unsub_timer = None
 
     @property
     def name(self) -> str:
         """Return the name."""
         return "Next Prayer"
+
+    async def async_added_to_hass(self) -> None:
+        """Start per-minute timer when added."""
+        await super().async_added_to_hass()
+        self._unsub_timer = async_track_time_interval(
+            self.hass, self._update_state, timedelta(minutes=1)
+        )
+
+    async def async_will_remove_from_hass(self) -> None:
+        """Cancel timer when removed."""
+        if self._unsub_timer:
+            self._unsub_timer()
+
+    @callback
+    def _update_state(self, _now) -> None:
+        """Force state update every minute."""
+        self.async_write_ha_state()
 
     @property
     def native_value(self) -> str | None:
@@ -171,8 +189,12 @@ class NextPrayerSensor(AzanBaseSensor):
         if not prayer:
             return {}
 
-        now = datetime.now()
-        diff = prayer["time"] - now
+        from homeassistant.util import dt as dt_util
+        now = dt_util.now()
+        prayer_time = prayer["time"]
+        if prayer_time.tzinfo is None:
+            prayer_time = prayer_time.replace(tzinfo=now.tzinfo)
+        diff = prayer_time - now
         minutes_until = max(0, int(diff.total_seconds() / 60))
 
         return {
@@ -186,9 +208,16 @@ class NextPrayerSensor(AzanBaseSensor):
         if not self.coordinator.data:
             return None
 
-        now = datetime.now()
+        from homeassistant.util import dt as dt_util
+        now = dt_util.now()
         for prayer in self.coordinator.data.prayers:
-            if prayer["enabled"] and prayer["time"] > now:
+            if not prayer["enabled"]:
+                continue
+            prayer_time = prayer["time"]
+            # Make timezone-aware for proper comparison
+            if prayer_time.tzinfo is None:
+                prayer_time = prayer_time.replace(tzinfo=now.tzinfo)
+            if prayer_time > now:
                 return prayer
         return None
 
@@ -236,7 +265,12 @@ class AzanCountdownSensor(AzanBaseSensor):
         prayer = self._get_next_prayer()
         if not prayer:
             return None
-        diff = prayer["time"] - datetime.now()
+        from homeassistant.util import dt as dt_util
+        now = dt_util.now()
+        prayer_time = prayer["time"]
+        if prayer_time.tzinfo is None:
+            prayer_time = prayer_time.replace(tzinfo=now.tzinfo)
+        diff = prayer_time - now
         return max(0, int(diff.total_seconds() / 60))
 
     @property
@@ -246,7 +280,12 @@ class AzanCountdownSensor(AzanBaseSensor):
         if not prayer:
             return {"prayer_name": None, "time": None, "hours": 0, "minutes": 0, "seconds": 0}
 
-        diff = prayer["time"] - datetime.now()
+        from homeassistant.util import dt as dt_util
+        now = dt_util.now()
+        prayer_time = prayer["time"]
+        if prayer_time.tzinfo is None:
+            prayer_time = prayer_time.replace(tzinfo=now.tzinfo)
+        diff = prayer_time - now
         total_seconds = max(0, int(diff.total_seconds()))
         return {
             "prayer_name": prayer["name"],
@@ -261,9 +300,13 @@ class AzanCountdownSensor(AzanBaseSensor):
         """Find the next upcoming prayer (enabled or not, for countdown)."""
         if not self.coordinator.data:
             return None
-        now = datetime.now()
+        from homeassistant.util import dt as dt_util
+        now = dt_util.now()
         for prayer in self.coordinator.data.prayers:
-            if prayer["time"] > now:
+            prayer_time = prayer["time"]
+            if prayer_time.tzinfo is None:
+                prayer_time = prayer_time.replace(tzinfo=now.tzinfo)
+            if prayer_time > now:
                 return prayer
         return None
 
