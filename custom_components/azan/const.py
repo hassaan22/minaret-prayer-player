@@ -51,8 +51,8 @@ PRAYER_TOGGLES = [
 ]
 
 # Prayer sources
-SOURCE_QATAR_MOI = "qatar_moi"
 SOURCE_ALADHAN = "aladhan"
+SOURCE_QATAR_MOI = "qatar_moi"
 
 # Ordered list of prayers
 PRAYER_ORDER = ["Fajr", "Sunrise", "Dhuhr", "Asr", "Maghrib", "Isha"]

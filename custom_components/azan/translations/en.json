@@ -3,26 +3,26 @@
     "step": {
       "user": {
         "title": "Azan Audio",
-        "description": "The integration includes two built-in azan recordings (Full and Short). Choose which variant to use per prayer, or provide a custom YouTube URL or local MP3 path (e.g. media/azan.mp3) to override the defaults.",
+        "description": "The integration includes two built-in azan recordings (Full length and Short length). Choose which variant to use per prayer, or provide a custom YouTube URL or local MP3 path (e.g. media/azan.mp3) to override the defaults.",
         "data": {
-          "azan_url": "Custom Azan Audio URL (optional)",
-          "fajr_azan_url": "Custom Fajr Audio URL (optional)",
           "sound_fajr": "Azan for Fajr",
           "sound_sunrise": "Azan for Sunrise",
           "sound_dhuhr": "Azan for Dhuhr",
           "sound_asr": "Azan for Asr",
           "sound_maghrib": "Azan for Maghrib",
-          "sound_isha": "Azan for Isha"
+          "sound_isha": "Azan for Isha",
+          "azan_url": "Custom Azan Audio URL (optional)",
+          "fajr_azan_url": "Custom Fajr Audio URL (optional)"
         },
         "data_description": {
-          "azan_url": "YouTube or direct URL (or local path) for the main azan audio",
-          "fajr_azan_url": "YouTube or direct URL (or local path) for the Fajr audio",
           "sound_fajr": "Choose Full, Short, or Custom audio for Fajr. If Custom, uses the Fajr audio URL.",
           "sound_sunrise": "Choose Full, Short, or Custom audio for Sunrise. If Custom, uses the main Azan URL.",
           "sound_dhuhr": "Choose Full, Short, or Custom audio for Dhuhr.",
           "sound_asr": "Choose Full, Short, or Custom audio for Asr.",
           "sound_maghrib": "Choose Full, Short, or Custom audio for Maghrib.",
-          "sound_isha": "Choose Full, Short, or Custom audio for Isha."
+          "sound_isha": "Choose Full, Short, or Custom audio for Isha.",
+          "azan_url": "YouTube URL, direct URL, or local filepath (eg: `/media/adhan.mp3`) for the main azan audio",
+          "fajr_azan_url": "YouTube URL, direct URL, or local filepath (eg: `/media/adhan.mp3`) specifically for the Fajr azan audio"
         }
       },
       "playback_mode": {
@@ -60,7 +60,7 @@
       },
       "location": {
         "title": "Location",
-        "description": "Configure location for AlAdhan prayer time calculations.",
+        "description": "Configure location for prayer time calculations.",
         "data": {
           "city": "City",
           "country": "Country",
@@ -69,7 +69,7 @@
       },
       "schedule": {
         "title": "Schedule & Prayers",
-        "description": "Configure the offset and which prayers to play azan for.",
+        "description": "Configure which prayers to play azan for and the offset for Sunrise.",
         "data": {
           "prayer_fajr": "Fajr",
           "prayer_sunrise": "Sunrise",
@@ -92,16 +92,27 @@
     "step": {
       "init": {
         "title": "Azan Audio",
-        "description": "Update the azan audio source. The integration ships with Full and Short azan recordings; provide a custom URL or local MP3 to override.",
+        "description": "The integration includes two built-in azan recordings (Full length and Short length). Choose which variant to use per prayer, or provide a custom YouTube URL or local MP3 path (e.g. media/azan.mp3) to override the defaults.",
         "data": {
-          "azan_url": "Azan Audio URL",
-          "fajr_azan_url": "Fajr Audio URL (optional)",
           "sound_fajr": "Azan for Fajr",
           "sound_sunrise": "Azan for Sunrise",
           "sound_dhuhr": "Azan for Dhuhr",
           "sound_asr": "Azan for Asr",
           "sound_maghrib": "Azan for Maghrib",
-          "sound_isha": "Azan for Isha"
+          "sound_isha": "Azan for Isha",
+          "azan_url": "Azan Audio URL (optional)",
+          "fajr_azan_url": "Fajr Audio URL (optional)"
+        }
+        ,
+        "data_description": {
+          "sound_fajr": "Choose Full, Short, or Custom audio for Fajr. If Custom, uses the Fajr audio URL.",
+          "sound_sunrise": "Choose Full, Short, or Custom audio for Sunrise. If Custom, uses the main Azan URL.",
+          "sound_dhuhr": "Choose Full, Short, or Custom audio for Dhuhr.",
+          "sound_asr": "Choose Full, Short, or Custom audio for Asr.",
+          "sound_maghrib": "Choose Full, Short, or Custom audio for Maghrib.",
+          "sound_isha": "Choose Full, Short, or Custom audio for Isha.",
+          "azan_url": "YouTube URL, direct URL, or local filepath (eg: `/media/adhan.mp3`) for the main azan audio",
+          "fajr_azan_url": "YouTube URL, direct URL, or local filepath (eg: `/media/adhan.mp3`) specifically for the Fajr azan audio"
         }
       },
       "playback_mode": {
@@ -142,6 +153,7 @@
       },
       "schedule": {
         "title": "Schedule & Prayers",
+        "description": "Configure which prayers to play azan for and the offset for Sunrise.",
         "data": {
           "prayer_fajr": "Fajr",
           "prayer_sunrise": "Sunrise",

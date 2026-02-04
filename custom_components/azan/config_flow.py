@@ -120,8 +120,8 @@ class AzanConfigFlow(ConfigFlow, domain=DOMAIN):
                         CONF_PLAYBACK_MODE, default=PLAYBACK_MEDIA_PLAYER
                     ): vol.In(
                         {
-                            PLAYBACK_ANDROID_VLC: "Android Phone (via VLC)",
                             PLAYBACK_MEDIA_PLAYER: "Smart Speaker / Media Player",
+                            PLAYBACK_ANDROID_VLC: "Android Phone (via VLC)",
                         }
                     ),
                 }
@@ -183,8 +183,8 @@ class AzanConfigFlow(ConfigFlow, domain=DOMAIN):
                         CONF_PRAYER_SOURCE, default=DEFAULT_SOURCE
                     ): vol.In(
                         {
-                            SOURCE_QATAR_MOI: "Qatar MOI (portal.moi.gov.qa)",
                             SOURCE_ALADHAN: "AlAdhan API (aladhan.com)",
+                            SOURCE_QATAR_MOI: "Qatar MOI (portal.moi.gov.qa)",
                         }
                     ),
                 }
@@ -344,8 +344,9 @@ class AzanOptionsFlow(OptionsFlow):
                         default=current.get(CONF_PLAYBACK_MODE, PLAYBACK_MEDIA_PLAYER),
                     ): vol.In(
                         {
-                            PLAYBACK_ANDROID_VLC: "Android Phone (via VLC)",
                             PLAYBACK_MEDIA_PLAYER: "Smart Speaker / Media Player",
+                            PLAYBACK_ANDROID_VLC: "Android Phone (via VLC)",
+                            
                         }
                     ),
                 }
@@ -423,8 +424,8 @@ class AzanOptionsFlow(OptionsFlow):
                         default=current.get(CONF_PRAYER_SOURCE, DEFAULT_SOURCE),
                     ): vol.In(
                         {
-                            SOURCE_QATAR_MOI: "Qatar MOI (portal.moi.gov.qa)",
                             SOURCE_ALADHAN: "AlAdhan API (aladhan.com)",
+                            SOURCE_QATAR_MOI: "Qatar MOI (portal.moi.gov.qa)",
                         }
                     ),
                 }
