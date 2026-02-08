@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import voluptuous as vol
+import logging
 
 from homeassistant.config_entries import ConfigFlow, ConfigFlowResult, OptionsFlow
 from homeassistant.core import callback
@@ -47,6 +48,8 @@ from .const import (
     SOUND_OPTION_SHORT,
 )
 
+_LOGGER = logging.getLogger(__name__)
+
 
 class AzanConfigFlow(ConfigFlow, domain=DOMAIN):
     """Handle a config flow for Azan Prayer Times."""
@@ -61,6 +64,7 @@ class AzanConfigFlow(ConfigFlow, domain=DOMAIN):
         self, user_input: dict | None = None
     ) -> ConfigFlowResult:
         """Step 1: Audio settings."""
+        _LOGGER.debug("ConfigFlow: async_step_user called with input: %s", user_input)
         if user_input is not None:
             self._data.update(user_input)
             return await self.async_step_playback_mode()
@@ -106,6 +110,7 @@ class AzanConfigFlow(ConfigFlow, domain=DOMAIN):
         self, user_input: dict | None = None
     ) -> ConfigFlowResult:
         """Step 2: Playback mode selection."""
+        _LOGGER.debug("ConfigFlow: async_step_playback_mode called with input: %s", user_input)
         if user_input is not None:
             self._data.update(user_input)
             if user_input[CONF_PLAYBACK_MODE] == PLAYBACK_MEDIA_PLAYER:
@@ -132,6 +137,7 @@ class AzanConfigFlow(ConfigFlow, domain=DOMAIN):
         self, user_input: dict | None = None
     ) -> ConfigFlowResult:
         """Step 3a: Media player selection for smart speakers."""
+        _LOGGER.debug("ConfigFlow: async_step_media_player called with input: %s", user_input)
         if user_input is not None:
             self._data.update(user_input)
             return await self.async_step_prayer_source()
@@ -151,6 +157,7 @@ class AzanConfigFlow(ConfigFlow, domain=DOMAIN):
         self, user_input: dict | None = None
     ) -> ConfigFlowResult:
         """Step 3b: Android VLC settings (notify service + external URL)."""
+        _LOGGER.debug("ConfigFlow: async_step_android_vlc called with input: %s", user_input)
         if user_input is not None:
             self._data.update(user_input)
             return await self.async_step_prayer_source()
@@ -169,6 +176,7 @@ class AzanConfigFlow(ConfigFlow, domain=DOMAIN):
         self, user_input: dict | None = None
     ) -> ConfigFlowResult:
         """Step 4: Prayer times source."""
+        _LOGGER.debug("ConfigFlow: async_step_prayer_source called with input: %s", user_input)
         if user_input is not None:
             self._data.update(user_input)
             if user_input[CONF_PRAYER_SOURCE] == SOURCE_ALADHAN:
@@ -195,6 +203,7 @@ class AzanConfigFlow(ConfigFlow, domain=DOMAIN):
         self, user_input: dict | None = None
     ) -> ConfigFlowResult:
         """Step 5: Location settings for AlAdhan."""
+        _LOGGER.debug("ConfigFlow: async_step_location called with input: %s", user_input)
         if user_input is not None:
             self._data.update(user_input)
             return await self.async_step_schedule()
@@ -218,6 +227,7 @@ class AzanConfigFlow(ConfigFlow, domain=DOMAIN):
         self, user_input: dict | None = None
     ) -> ConfigFlowResult:
         """Step 6: Schedule settings (offset and prayer toggles)."""
+        _LOGGER.debug("ConfigFlow: async_step_schedule called with input: %s", user_input)
         if user_input is not None:
             self._data.update(user_input)
             await self.async_set_unique_id(DOMAIN)
@@ -263,6 +273,7 @@ class AzanOptionsFlow(OptionsFlow):
         self, user_input: dict | None = None
     ) -> ConfigFlowResult:
         """First step of options: audio settings."""
+        _LOGGER.debug("OptionsFlow: async_step_init called with input: %s", user_input)
         if user_input is not None:
             self._data.update(user_input)
             return await self.async_step_playback_mode()
@@ -327,6 +338,7 @@ class AzanOptionsFlow(OptionsFlow):
         self, user_input: dict | None = None
     ) -> ConfigFlowResult:
         """Options step: Playback mode selection."""
+        _LOGGER.debug("OptionsFlow: async_step_playback_mode called with input: %s", user_input)
         if user_input is not None:
             self._data.update(user_input)
             if user_input[CONF_PLAYBACK_MODE] == PLAYBACK_MEDIA_PLAYER:
@@ -357,6 +369,7 @@ class AzanOptionsFlow(OptionsFlow):
         self, user_input: dict | None = None
     ) -> ConfigFlowResult:
         """Options step: Media player selection for smart speakers."""
+        _LOGGER.debug("OptionsFlow: async_step_media_player called with input: %s", user_input)
         if user_input is not None:
             self._data.update(user_input)
             return await self.async_step_prayer_source()
@@ -381,6 +394,7 @@ class AzanOptionsFlow(OptionsFlow):
         self, user_input: dict | None = None
     ) -> ConfigFlowResult:
         """Options step: Android VLC settings."""
+        _LOGGER.debug("OptionsFlow: async_step_android_vlc called with input: %s", user_input)
         if user_input is not None:
             self._data.update(user_input)
             return await self.async_step_prayer_source()
@@ -407,6 +421,7 @@ class AzanOptionsFlow(OptionsFlow):
         self, user_input: dict | None = None
     ) -> ConfigFlowResult:
         """Options step: Prayer source."""
+        _LOGGER.debug("OptionsFlow: async_step_prayer_source called with input: %s", user_input)
         if user_input is not None:
             self._data.update(user_input)
             if user_input[CONF_PRAYER_SOURCE] == SOURCE_ALADHAN:
@@ -436,6 +451,7 @@ class AzanOptionsFlow(OptionsFlow):
         self, user_input: dict | None = None
     ) -> ConfigFlowResult:
         """Options step: Location for AlAdhan."""
+        _LOGGER.debug("OptionsFlow: async_step_location called with input: %s", user_input)
         if user_input is not None:
             self._data.update(user_input)
             return await self.async_step_schedule()
@@ -465,6 +481,7 @@ class AzanOptionsFlow(OptionsFlow):
         self, user_input: dict | None = None
     ) -> ConfigFlowResult:
         """Options step: Schedule settings."""
+        _LOGGER.debug("OptionsFlow: async_step_schedule called with input: %s", user_input)
         if user_input is not None:
             self._data.update(user_input)
             return self.async_create_entry(title="", data=self._data)

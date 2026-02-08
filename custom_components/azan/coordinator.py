@@ -59,22 +59,22 @@ class AzanCoordinator(DataUpdateCoordinator[PrayerData]):
 
     async def _async_update_data(self) -> PrayerData:
         """Fetch prayer times from the configured source."""
-        _LOGGER.debug("_async_update_data called")
+        _LOGGER.debug("Coordinator: _async_update_data called")
         source = self.config.get(CONF_PRAYER_SOURCE, SOURCE_QATAR_MOI)
-        _LOGGER.debug("Prayer source: %s", source)
+        _LOGGER.debug("Coordinator: Prayer source: %s", source)
         try:
             if source == SOURCE_QATAR_MOI:
-                _LOGGER.debug("Fetching Qatar MOI timings...")
+                _LOGGER.debug("Coordinator: Fetching Qatar MOI timings...")
                 raw = await self._fetch_qatar_moi()
             else:
-                _LOGGER.debug("Fetching AlAdhan timings...")
+                _LOGGER.debug("Coordinator: Fetching AlAdhan timings...")
                 raw = await self._fetch_aladhan()
         except Exception as err:
-            _LOGGER.error("Exception fetching prayer times: %s", err)
+            _LOGGER.error("Coordinator: Exception fetching prayer times: %s", err)
             raise UpdateFailed(f"Failed to fetch prayer times: {err}") from err
 
         today = datetime.now().strftime("%Y-%m-%d")
-        _LOGGER.debug("Normalizing times for today: %s", today)
+        _LOGGER.debug("Coordinator: Normalizing times for today: %s", today)
         prayers = self._normalize_times(raw)
 
         # Preserve played_today across refreshes on the same day
@@ -83,11 +83,11 @@ class AzanCoordinator(DataUpdateCoordinator[PrayerData]):
             data.played_today = self.data.played_today
 
         self._last_date = today
-        _LOGGER.info("Prayer times refreshed for %s", today)
-        _LOGGER.debug("Prayer times: %s", prayers)
+        _LOGGER.info("Coordinator: Prayer times refreshed for %s", today)
+        _LOGGER.debug("Coordinator: Prayer times: %s", prayers)
         for p in prayers:
             _LOGGER.debug(
-                "  %s: %s (enabled=%s)", p["name"], p["time_str"], p["enabled"]
+                "Coordinator:   %s: %s (enabled=%s)", p["name"], p["time_str"], p["enabled"]
             )
 
         return data
