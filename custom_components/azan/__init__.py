@@ -610,19 +610,21 @@ def _schedule_next_prayer(hass: HomeAssistant, entry: ConfigEntry) -> None:
 
     config = {**entry.data, **entry.options}
     now = dt_util.now()
+    _LOGGER.debug("Scheduler: Current time: %s (tz: %s)", now, now.tzinfo)
 
     # Find next enabled, unplayed prayer
     next_prayer = None
-    _LOGGER.debug("Played today set: %s", getattr(coordinator.data, "played_today", set()))
+    _LOGGER.debug("Scheduler: Played today set: %s", getattr(coordinator.data, "played_today", set()))
     for prayer in coordinator.data.prayers:
+        prayer_time = prayer["time"]
+        _LOGGER.debug("Scheduler: Considering prayer %s at %s (tz: %s)", prayer["name"], prayer_time, getattr(prayer_time, 'tzinfo', None))
         if not prayer["enabled"]:
             continue
         if prayer["name"] in coordinator.data.played_today:
-            _LOGGER.debug("Skipping %s because it's in played_today", prayer["name"])
+            _LOGGER.debug("Scheduler: Skipping %s because it's in played_today", prayer["name"])
             continue
         _LOGGER.debug("Considering prayer %s at %s", prayer["name"], prayer["time"])
         # Make prayer time timezone-aware for comparison
-        prayer_time = prayer["time"]
         if prayer_time.tzinfo is None:
             prayer_time = prayer_time.replace(tzinfo=now.tzinfo)
         # Offset only applies to Sunrise; other prayers use zero offset
@@ -637,12 +639,11 @@ def _schedule_next_prayer(hass: HomeAssistant, entry: ConfigEntry) -> None:
 
     if next_prayer is None:
         # No more prayers today, schedule a refresh at midnight
-        _LOGGER.debug("No next prayer found; played_today=%s", coordinator.data.played_today)
+        _LOGGER.debug("Scheduler: No next prayer found; played_today=%s", coordinator.data.played_today)
         tomorrow = (now + timedelta(days=1)).replace(
-            hour=0, minute=1, second=0, microsecond=0
+            hour=0, minute=30, second=0, microsecond=0
         )
-        _LOGGER.debug("No more prayers today, scheduling midnight refresh")
-
+        _LOGGER.debug("Scheduler: No more prayers today, scheduling midnight refresh")
         @callback
         def _midnight_refresh(_now):
             """Refresh prayer times at midnight."""
@@ -665,22 +666,22 @@ def _schedule_next_prayer(hass: HomeAssistant, entry: ConfigEntry) -> None:
 
     target_time = prayer_time - timedelta(minutes=offset_minutes)
     _LOGGER.info(
-        "Scheduled %s azan at %s (offset: -%dm)",
+        "Scheduler: Scheduled %s azan at %s (offset: -%dm)",
         next_prayer["name"],
-        target_time.strftime("%H:%M:%S"),
+        target_time.strftime("%Y-%m-%d %H:%M:%S"),
         offset_minutes,
     )
 
     @callback
     def _prayer_callback(_now):
         """Trigger azan playback for the scheduled prayer."""
+        _LOGGER.info("Scheduler: _prayer_callback triggered for %s", next_prayer["name"])
         prayer_name = next_prayer["name"]
         # Guard: check if already played (prevents double-triggers)
         if coordinator.data and prayer_name in coordinator.data.played_today:
-            _LOGGER.debug("Prayer %s already played, skipping", prayer_name)
+            _LOGGER.debug("Scheduler: Prayer %s already played, skipping", prayer_name)
             _schedule_next_prayer(hass, entry)
             return
-        _LOGGER.info("Scheduler triggered: %s", prayer_name)
         hass.async_create_task(_play_azan(hass, entry, prayer_name))
 
     store["unsub_timer"] = async_track_point_in_time(

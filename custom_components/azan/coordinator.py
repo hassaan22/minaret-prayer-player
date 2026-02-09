@@ -127,9 +127,9 @@ class AzanCoordinator(DataUpdateCoordinator[PrayerData]):
 
     async def _fetch_aladhan(self) -> dict[str, str]:
         """Fetch prayer times from AlAdhan API."""
-        city = self.config.get(CONF_CITY, "Doha")
-        country = self.config.get(CONF_COUNTRY, "Qatar")
-        method = self.config.get(CONF_METHOD, 10)
+        city = self.config.get(CONF_CITY, "Los Angeles")
+        country = self.config.get(CONF_COUNTRY, "United States")
+        method = self.config.get(CONF_METHOD, 2)
 
         url = (
             f"https://api.aladhan.com/v1/timingsByCity"
